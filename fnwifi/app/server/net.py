@@ -1132,7 +1132,7 @@ def perform_start():
     )
 
 
-def perform_stop():
+def perform_stop(clear_state=True):
     """完整停止热点流程，返回输出文案。"""
     cfg = config.load_cfg()
     config.ensure_iface(cfg)
@@ -1149,5 +1149,6 @@ def perform_stop():
             if sta_prev_con == "--":
                 sta_prev_con = ""
     restore_iface(hotspot_iface, sta_prev_con, virtual_iface)
-    write_hotspot_state(False)
+    if clear_state:
+        write_hotspot_state(False)
     return "热点已关闭"
