@@ -1,0 +1,9 @@
+#!/bin/bash
+
+### 安装后回调:仅设置应用自身目录权限,不修改宿主系统任何配置。
+
+chmod +x ${TRIM_APPDEST}/bin/*/* 2>/dev/null || true
+chmod +x ${TRIM_APPDEST}/ui/*.cgi 2>/dev/null || true
+chmod +x ${TRIM_APPDEST}/www/*.cgi 2>/dev/null || true
+
+exit 0

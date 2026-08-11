@@ -1,0 +1,5 @@
+#!/bin/bash
+
+### 升级后:配置数据(TRIM_PKGVAR)由系统保留,无需迁移。
+
+exit 0

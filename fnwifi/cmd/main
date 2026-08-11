@@ -1,0 +1,105 @@
+#!/bin/bash
+
+# fnwifi 生命周期主脚本:start / stop / status
+# 说明:
+#   - 应用为自包含架构:hostapd / dnsmasq / iw 等二进制随应用分发(app/bin/<arch>/),
+#     不通过 apt 修改宿主系统;
+#   - 热点运行期间的网络改动(iptables 规则、监管域、接口 IP、NM 状态)均为瞬态,
+#     停止/卸载时由 server/main.py --cleanup 统一撤销。
+
+LOG_FILE="${TRIM_PKGVAR}/info.log"
+PID_FILE="${TRIM_PKGVAR}/app.pid"
+SOCKET_PATH="${TRIM_APPDEST}/fnwifi.sock"
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+
+# 后端入口:拆分后的 Python 包,入口为 server/main.py
+CMD=(
+  "${PYTHON_BIN}"
+  "${TRIM_APPDEST}/server/main.py"
+  --unix-socket "${SOCKET_PATH}"
+  --base-path "/app/fnwifi"
+  --www-root "${TRIM_APPDEST}/www"
+  --data-dir "${TRIM_PKGVAR}"
+)
+
+log_msg() {
+  mkdir -p "${TRIM_PKGVAR}"
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >>"${LOG_FILE}"
+}
+
+check_process() {
+  local pid=$1
+  kill -0 "${pid}" 2>/dev/null
+}
+
+status() {
+  if [ -f "${PID_FILE}" ]; then
+    pid=$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')
+    if check_process "${pid}"; then
+      return 0
+    fi
+    rm -f "${PID_FILE}" "${SOCKET_PATH}"
+  fi
+  return 1
+}
+
+start_process() {
+  if status; then
+    return 0
+  fi
+  mkdir -p "${TRIM_PKGVAR}"
+  rm -f "${SOCKET_PATH}"
+  log_msg "Starting process ..."
+  if command -v setsid >/dev/null 2>&1; then
+    setsid "${CMD[@]}" >>"${LOG_FILE}" 2>&1 &
+  else
+    nohup "${CMD[@]}" >>"${LOG_FILE}" 2>&1 &
+  fi
+  printf "%s" "$!" >"${PID_FILE}"
+}
+
+stop_process() {
+  log_msg "Stopping process ..."
+  # 停用/卸载时先撤销热点(移除 iptables 规则/停 dnsmasq/还原监管域与接口状态)
+  if command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
+    "${PYTHON_BIN}" "${TRIM_APPDEST}/server/main.py" \
+      --unix-socket "${SOCKET_PATH}" \
+      --base-path "/app/fnwifi" \
+      --www-root "${TRIM_APPDEST}/www" \
+      --data-dir "${TRIM_PKGVAR}" \
+      --cleanup >>"${LOG_FILE}" 2>&1 || true
+  fi
+  if [ -r "${PID_FILE}" ]; then
+    pid=$(head -n 1 "${PID_FILE}" | tr -d '[:space:]')
+    if check_process "${pid}"; then
+      kill -TERM "${pid}" >>"${LOG_FILE}" 2>&1 || true
+      count=0
+      while check_process "${pid}" && [ "${count}" -lt 30 ]; do
+        sleep 1
+        count=$((count + 1))
+      done
+      if check_process "${pid}"; then
+        kill -KILL "${pid}" >>"${LOG_FILE}" 2>&1 || true
+      fi
+    fi
+  fi
+  rm -f "${PID_FILE}" "${SOCKET_PATH}"
+}
+
+case "$1" in
+  start)
+    start_process
+    ;;
+  stop)
+    stop_process
+    ;;
+  status)
+    if status; then
+      exit 0
+    fi
+    exit 3
+    ;;
+  *)
+    exit 1
+    ;;
+esac

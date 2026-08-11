@@ -1,0 +1,36 @@
+#!/bin/bash
+
+### 卸载后回调:根据卸载向导选择,决定是否删除热点配置数据。
+### wizard_clean_data: "yes" = 删除全部数据(含配置), "no" = 仅卸载应用(保留配置)。
+
+WIZARD_CLEAN="${wizard_clean_data:-no}"
+if [ "$WIZARD_CLEAN" = "yes" ]; then
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 用户选择删除全部数据" >> "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>/dev/null
+  # 删除 @appdata(热点配置:hotspot.env / hotspot.state / nat.env / ports.state / isolation.state 等)
+  rm -rf "${TRIM_PKGVAR}" 2>/dev/null
+  # 删除 @apphome
+  APP_HOME="$(dirname "${TRIM_PKGVAR}")/../@apphome/${TRIM_APPNAME}"
+  rm -rf "${APP_HOME}" 2>/dev/null
+  # 删除 @appconf
+  rm -rf "${TRIM_PKGETC}" 2>/dev/null
+  # 删除 @appmeta
+  APP_META="$(dirname "${TRIM_PKGVAR}")/../@appmeta/${TRIM_APPNAME}"
+  rm -rf "${APP_META}" 2>/dev/null
+  # 删除 @appcenter
+  rm -rf "${TRIM_APPDEST}" 2>/dev/null
+else
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] 用户选择保留配置数据,仅卸载应用" >> "${TRIM_TEMP_LOGFILE:-/dev/null}" 2>/dev/null
+  # 保留 @appdata(配置),删除其余
+  # 删除 @apphome
+  APP_HOME="$(dirname "${TRIM_PKGVAR}")/../@apphome/${TRIM_APPNAME}"
+  rm -rf "${APP_HOME}" 2>/dev/null
+  # 删除 @appconf
+  rm -rf "${TRIM_PKGETC}" 2>/dev/null
+  # 删除 @appmeta
+  APP_META="$(dirname "${TRIM_PKGVAR}")/../@appmeta/${TRIM_APPNAME}"
+  rm -rf "${APP_META}" 2>/dev/null
+  # 删除 @appcenter
+  rm -rf "${TRIM_APPDEST}" 2>/dev/null
+fi
+
+exit 0

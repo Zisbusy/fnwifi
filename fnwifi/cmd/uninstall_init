@@ -1,0 +1,31 @@
+#!/bin/bash
+
+### 卸载前:撤销热点 + 恢复宿主 regulatory.db 链接
+### 自包含模式:所有依赖(hostapd/dnsmasq/iw 等)由应用自带,
+### 不再通过 apt 修改宿主系统;此处仅做运行期瞬态状态的清理。
+
+# 撤销热点(移除 iptables 规则/停 dnsmasq/还原监管域与接口状态)
+if command -v "${PYTHON_BIN:-python3}" >/dev/null 2>&1; then
+  "${PYTHON_BIN:-python3}" "${TRIM_APPDEST}/server/main.py" \
+    --unix-socket "${TRIM_APPDEST}/fnwifi.sock" \
+    --base-path "/app/fnwifi" \
+    --www-root "${TRIM_APPDEST}/www" \
+    --data-dir "${TRIM_PKGVAR}" \
+    --cleanup 2>/dev/null || true
+fi
+
+# 恢复 regulatory.db 到系统默认(若运行期改过 alternatives 链接)
+for F in regulatory.db regulatory.db.p7s; do
+  FPATH="/usr/lib/firmware/${F}"
+  if [ -L "${FPATH}" ] && [ "$(readlink -f "${FPATH}" 2>/dev/null || true)" = "${FPATH}-upstream" ]; then
+    if command -v update-alternatives >/dev/null 2>&1 && [ -e "/etc/alternatives/${F}" ]; then
+      update-alternatives --auto "${F}" 2>/dev/null || true
+    fi
+    if [ -f "${FPATH}-debian" ]; then
+      rm -f "${FPATH}" 2>/dev/null || true
+      ln -vsf "${FPATH}-debian" "${FPATH}" 2>/dev/null || true
+    fi
+  fi
+done
+
+exit 0
