@@ -1,0 +1,24 @@
+[
+  {
+    "stepTitle": "确认卸载",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "您即将卸载<b>无线热点</b>。"
+      },
+      {
+        "type": "radio",
+        "field": "wizard_clean_data",
+        "label": "是否同时删除热点配置数据？",
+        "initValue": "no",
+        "options": [
+          { "label": "保留配置，仅卸载应用（下次安装可恢复热点设置）", "value": "no" },
+          { "label": "删除所有数据（包括 SSID、密码、放行端口等配置），此操作不可恢复", "value": "yes" }
+        ],
+        "rules": [
+          { "required": true, "message": "请选择是否删除热点配置数据" }
+        ]
+      }
+    ]
+  }
+]
