@@ -1,0 +1,71 @@
+body[theme-mode="dark"] .sidebar,
+body[theme-mode="dark"] #app,
+body[theme-mode="dark"] .info-item,
+body[theme-mode="dark"] .client-row:not(.client-row-head),
+body[theme-mode="dark"] .field input, 
+body[theme-mode="dark"] .field select {
+    background: #0c0c0d;
+}
+body[theme-mode="dark"] .nav button {
+    color: #f2f3f4cc;
+}
+body[theme-mode="dark"] .nav button.active {
+    background-color: #1f2021;
+    color: #0066ff;
+}
+body[theme-mode="dark"] .nav button:hover,
+body[theme-mode="dark"] .main,
+body[theme-mode="dark"] .card,
+body[theme-mode="dark"] .toast,
+body[theme-mode="dark"] .modal-content,
+body[theme-mode="dark"] .ghost-btn,
+body[theme-mode="dark"] .eye-btn:hover {
+    background-color: #1f2021;
+}
+body[theme-mode="dark"] .page-head h1,
+body[theme-mode="dark"] .section-head h2,
+body[theme-mode="dark"] .legend-item strong,
+body[theme-mode="dark"] .overview-value,
+body[theme-mode="dark"] .pwd-line #ovPassword,
+body[theme-mode="dark"] .info-item strong,
+body[theme-mode="dark"] .client-row:not(.client-row-head),
+body[theme-mode="dark"] .field input, 
+body[theme-mode="dark"] .field select,
+body[theme-mode="dark"] .modal-content h2 {
+    color: #ffffff;
+}
+body[theme-mode="dark"] .page-sub,
+body[theme-mode="dark"] .card-label,
+body[theme-mode="dark"] .chart-legend,
+body[theme-mode="dark"] .info-item span,
+body[theme-mode="dark"] .ghost-btn,
+body[theme-mode="dark"] #modalBody,
+body[theme-mode="dark"] .field,
+body[theme-mode="dark"] .client-row-head,
+body[theme-mode="dark"] .client-body .empty {
+    color: #f2f3f4cc;
+}
+body[theme-mode="dark"] .card,
+body[theme-mode="dark"] .info-item,
+body[theme-mode="dark"] .client-row:not(.client-row-head) {
+    border-color:#ffffff29;
+}
+body[theme-mode="dark"] .grid-lines line {
+    stroke: #292a2b;
+}
+body[theme-mode="dark"] .bad {
+    color: #c0392b !important;
+}
+body[theme-mode="dark"] .ok {
+    color: #19a565 !important;
+}
+body[theme-mode="dark"] .field input, 
+body[theme-mode="dark"] .field select,
+body[theme-mode="dark"] .toast,
+body[theme-mode="dark"] .modal-content,
+body[theme-mode="dark"] .ghost-btn {
+    border: 1px solid #ffffff29;
+}
+body[theme-mode="dark"] .client-body .empty {
+    border: 1px dashed #ffffff29;
+}

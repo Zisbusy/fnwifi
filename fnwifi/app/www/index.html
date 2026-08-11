@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>无线热点</title>
+  <link rel="stylesheet" href="/app/fnwifi/style.css">
+  <link rel="stylesheet" href="/app/fnwifi/dark.css">
+</head>
+
+<body>
+  <script>
+    (function () {
+      var THEME_DARK = 20;
+      var THEME_LIGHT = 10;
+      var THEME_OS = 30;
+      var mq = window.matchMedia
+        ? window.matchMedia("(prefers-color-scheme: dark)")
+        : null;
+
+      function getThemeType() {
+        var stored =
+          window.localStorage.getItem("os-theme-mode") ||
+          window.localStorage.getItem("fnos-theme-mode");
+        return stored ? Number(stored) : THEME_LIGHT;
+      }
+
+      function applyTheme() {
+        var themeType = getThemeType();
+        var isDark =
+          themeType === THEME_DARK ||
+          (themeType === THEME_OS && mq && mq.matches);
+        // 注意:要同时处理“切回亮色”,不能只加不删
+        if (isDark) {
+          document.body.setAttribute("theme-mode", "dark");
+        } else {
+          document.body.removeAttribute("theme-mode");
+        }
+      }
+
+      // 1. 页面加载时应用一次
+      applyTheme();
+
+      // 2. 系统设置页切主题 → 同源 localStorage 变化 → storage 事件
+      window.addEventListener("storage", function (e) {
+        if (e.key === "os-theme-mode" || e.key === "fnos-theme-mode") {
+          applyTheme();
+        }
+      });
+
+      // 3. “跟随系统”模式下,系统明暗切换
+      if (mq) {
+        mq.addEventListener("change", applyTheme);
+      }
+    })();
+  </script>
+  <!-- 主界面分栏 -->
+  <div id="app">
+    <!-- 左侧导航 -->
+    <div class="sidebar">
+      <div class="nav">
+        <button class="nav-item active" type="button" data-page="status" id="navStatus">
+          <span class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" class="size-4"><path fill-rule="evenodd" clip-rule="evenodd" d="M2 4a2 2 0 012-2h5a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm7 0H4v5h5V4zm4 0a2 2 0 012-2h5a2 2 0 012 2v5a2 2 0 01-2 2h-5a2 2 0 01-2-2V4zm7 0h-5v5h5V4zM2 15a2 2 0 012-2h5a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2v-5zm7 0H4v5h5v-5zm4 0a2 2 0 012-2h5a2 2 0 012 2v5a2 2 0 01-2 2h-5a2 2 0 01-2-2v-5zm7 0h-5v5h5v-5z"></path></svg>
+          </span>
+          <span>概览</span>
+        </button>
+        <button class="nav-item" type="button" data-page="clients" id="navClients">
+          <span class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" class="size-4"><path d="M1.499 19.3c1.697-4.378 5.95-6.362 9.832-5.807.66.095.876.859.524 1.425a1.18 1.18 0 01-1.116.56c-2.57-.284-5.193.757-6.74 3.123h6.247a.89.89 0 01.87.733c.119.612-.31 1.267-.934 1.267H2.398c-.3 0-.6-.1-.8-.4-.1-.2-.2-.601-.1-.901zm8.8-17.3c1.2 0 2.199.7 2.899 1.6.7.9 1 2.1 1 3.4 0 1.3-.4 2.5-1 3.4-.7.9-1.7 1.6-2.9 1.6s-2.2-.7-2.9-1.6c-.7-.9-1-2.1-1-3.4 0-1.3.4-2.5 1-3.4.7-.9 1.7-1.6 2.9-1.6zm0 2c-.4 0-.9.2-1.2.8-.4.5-.701 1.3-.701 2.2 0 .9.3 1.7.6 2.2.4.5.8.8 1.3.8.4 0 .9-.2 1.3-.8.4-.5.6-1.3.6-2.2 0-.9-.3-1.7-.7-2.2-.4-.5-.8-.8-1.2-.8z"></path><path d="M19.699 17.7a2 2 0 10-4 0 2 2 0 004 0zm2 0c0 .178-.013.352-.035.524l.14.062.092.046a1 1 0 01-.808 1.818l-.095-.036-.08-.036a4.02 4.02 0 01-.836.836l.036.08.036.096a1 1 0 01-1.818.807l-.046-.091-.063-.141a4.035 4.035 0 01-1.048 0l-.062.14-.046.092a1 1 0 01-1.781-.903l.034-.079a4.025 4.025 0 01-.836-.836l-.078.035a1 1 0 01-.813-1.828l.142-.063a4.037 4.037 0 010-1.047l-.142-.063a1 1 0 11.813-1.827l.077.034c.236-.318.519-.6.837-.837l-.034-.077.532-.237.002-.001-.534.238a1 1 0 011.827-.812l.063.141a4.049 4.049 0 011.046 0l.064-.141a1 1 0 011.828.812l-.035.078c.318.236.6.518.836.836l.079-.034.096-.037a1 1 0 01.715 1.864l-.14.063c.022.171.035.347.035.524z"></path></svg>
+          </span>
+          <span>终端列表</span>
+        </button>
+        <button class="nav-item" type="button" data-page="settings" id="navSettings">
+          <span class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.99 15.495c.61.36 1.3.54 1.99.54h.01c.35 0 .7-.05 1.04-.14 1.03-.27 1.9-.93 2.43-1.86.53-.93.68-2.01.4-3.04-.27-1.03-.93-1.9-1.86-2.43-.93-.53-2.01-.68-3.04-.4-1.03.27-1.9.93-2.43 1.86-.53.93-.68 2.01-.4 3.04.27 1.03.93 1.9 1.86 2.43zm1.48-5.39a1.976 1.976 0 011.52.2c.46.26.79.69.93 1.21s.07 1.06-.2 1.52c-.26.46-.69.79-1.21.93s-1.06.07-1.52-.2a1.96 1.96 0 01-.93-1.21c-.14-.52-.07-1.06.2-1.52.26-.46.69-.79 1.21-.93z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M6.68 21.674c.46.26.97.4 1.49.4l-.04-.02a2.982 2.982 0 002.6-1.5l.09-.15c.09-.16.22-.28.37-.37.15-.08.32-.13.5-.13h.5c.18 0 .35.04.5.13.15.09.28.22.38.4l.07.12c.4.69 1.05 1.18 1.82 1.39.76.21 1.59.1 2.28-.3l.38-.22c.7-.4 1.19-1.05 1.4-1.82.21-.76.1-1.59-.31-2.3l-.07-.12c-.08-.15-.13-.32-.13-.5 0-.17.05-.34.14-.5l.25-.43c.09-.15.22-.28.37-.37.15-.09.33-.14.52-.14h.16c.8 0 1.56-.31 2.12-.88.57-.57.88-1.32.88-2.12v-.44c0-.8-.31-1.56-.88-2.12-.57-.56-1.32-.88-2.09-.88h-.2c-.18 0-.35-.05-.5-.13a.957.957 0 01-.36-.36l-.25-.44c-.08-.15-.13-.32-.13-.5s.05-.35.13-.5l.09-.16c.4-.69.51-1.5.3-2.27a3.08 3.08 0 00-1.4-1.82l-.38-.22c-.7-.4-1.51-.51-2.28-.3-.77.21-1.42.71-1.82 1.4l-.09.15c-.08.15-.21.27-.36.36-.15.09-.32.14-.5.14h-.49c-.18 0-.35-.04-.5-.13a1.13 1.13 0 01-.38-.4l-.07-.11c-.4-.7-1.05-1.19-1.82-1.4-.78-.21-1.58-.11-2.26.29l-.38.22c-.7.4-1.19 1.05-1.4 1.82-.21.77-.1 1.58.27 2.22l.11.22c.08.15.13.33.13.5 0 .17-.05.34-.13.49l-.26.44c-.09.15-.22.28-.37.37-.15.09-.33.14-.52.14H4c-.8 0-1.55.31-2.12.88-.57.57-.88 1.32-.88 2.12v.44c0 .79.32 1.56.9 2.13.56.57 1.31.88 2.08.88h.2a.983.983 0 01.86.49l.25.43c.08.15.13.32.13.5s-.04.35-.13.5l-.09.16c-.4.7-.51 1.51-.3 2.28.21.77.7 1.42 1.4 1.82l.38.22zm-1.01-8.01c-.45-.26-.97-.4-1.46-.4l.02.02h-.2c-.27 0-.53-.1-.71-.29-.18-.19-.29-.45-.29-.71v-.44a1.005 1.005 0 011.01-1.01h.16c.53 0 1.05-.14 1.51-.41.46-.26.84-.64 1.1-1.1l.26-.45c.26-.45.39-.97.39-1.49 0-.53-.14-1.04-.37-1.44l-.11-.22c-.13-.23-.17-.51-.1-.76a.95.95 0 01.46-.61l.38-.22c.23-.13.5-.17.76-.1.25.06.47.23.62.49l.07.12c.27.46.64.84 1.1 1.1.45.26.97.4 1.5.4h.49c.52 0 1.04-.14 1.5-.4.46-.26.84-.64 1.1-1.1l.09-.15c.14-.23.35-.4.61-.47.26-.07.53-.03.76.1l.38.22c.23.13.4.36.47.61.07.26.03.53-.1.76l-.09.16a3.006 3.006 0 000 3l.25.44c.27.46.64.84 1.1 1.1.45.26.97.4 1.46.4h.2a.99.99 0 011 .99v.44a1.005 1.005 0 01-1.01 1.01h-.16c-.53 0-1.05.14-1.51.4-.46.26-.84.64-1.1 1.1l-.25.43c-.27.46-.41.98-.41 1.5 0 .53.14 1.05.42 1.54l.07.12c.13.23.17.51.1.76a.99.99 0 01-.47.61l-.38.22c-.23.13-.51.17-.76.1s-.47-.24-.62-.49l-.07-.11c-.26-.45-.64-.83-1.1-1.1-.45-.26-.97-.4-1.5-.4h-.5c-.52 0-1.04.14-1.5.4-.46.26-.83.64-1.1 1.1l-.09.16a1.01 1.01 0 01-1.37.36l-.38-.22a.99.99 0 01-.47-.61c-.07-.26-.03-.53.1-.76l.09-.16a3.006 3.006 0 000-3l-.25-.44c-.27-.46-.65-.84-1.1-1.1z"></path></svg>
+          </span>
+          <span>热点设置</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 右侧主内容 -->
+    <div class="main">
+
+      <!-- ===== 页面:概览 ===== -->
+      <section class="page active" id="page-status">
+        <header class="page-head">
+          <div>
+            <h1>概览</h1>
+            <p id="statusSummary" class="page-sub">正在加载...</p>
+          </div>
+          <div class="row-actions">
+            <button id="toggleBtn" class="primary-btn" type="button" disabled>开启热点</button>
+          </div>
+        </header>
+
+        <!-- 顶部两栏:左=实时网速,右=SSID/IP -->
+        <div class="overview-layout">
+          <div class="card chart-card">
+            <div class="chart-head">
+              <div class="card-label">实时网速</div>
+              <div class="chart-legend">
+                <span class="legend-item down"><i></i><span>下载</span><strong id="speedDown">0 B/s</strong></span>
+                <span class="legend-item up"><i></i><span>上传</span><strong id="speedUp">0 B/s</strong></span>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <svg id="speedChart" class="speed-chart-svg" viewBox="0 0 600 160" preserveAspectRatio="none">
+                <g class="grid-lines"></g>
+                <path id="lineDown" class="chart-line down"></path>
+                <path id="lineUp" class="chart-line up"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="overview-side">
+            <div class="card overview-card">
+              <div class="card-label">SSID</div>
+              <div class="overview-value" id="ovSsid">-</div>
+              <div class="overview-sub pwd-line">
+                <span>密码</span>
+                <span id="ovPassword">••••••••</span>
+                <button id="togglePwdBtn" class="eye-btn" type="button" title="显示/隐藏密码">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="card overview-card">
+              <div class="card-label">终端数量</div>
+              <div class="overview-value" id="ovClientCount">-</div>
+              <div class="overview-sub">已连接设备数</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WiFi 信息 -->
+        <div class="card info-card">
+          <div class="section-head">
+            <h2>WiFi 信息</h2>
+          </div>
+          <div class="info-grid">
+            <div class="info-item"><span>频段</span><strong id="wiBand">-</strong></div>
+            <div class="info-item"><span>信道</span><strong id="wiChannel">-</strong></div>
+            <div class="info-item"><span>信道带宽</span><strong id="wiWidth">-</strong></div>
+            <div class="info-item"><span>地址</span><strong id="wiIp">-</strong></div>
+            <div class="info-item"><span>发射功率</span><strong id="wiTxPower">-</strong></div>
+            <div class="info-item"><span>热点网卡</span><strong id="wiHotspotIface">-</strong></div>
+            <div class="info-item"><span>STA+AP 并发</span><strong id="wiStaAp">-</strong></div>
+            <div class="info-item"><span>网络隔离</span><strong id="wiIsolation">-</strong></div>
+            <div class="info-item"><span>本机端口</span><strong id="wiAllowPorts">-</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 页面:终端列表 ===== -->
+      <section class="page" id="page-clients">
+        <header class="page-head">
+          <div>
+            <h1>终端列表</h1>
+            <p class="page-sub">已连接设备与实时速率</p>
+          </div>
+          <div class="row-actions">
+            <span id="clientCount" class="meta">0</span>
+          </div>
+        </header>
+
+        <div class="card clients-card">
+          <div class="clients-table">
+            <div class="client-row client-row-head">
+              <span>设备</span>
+              <span>IP</span>
+              <span>信号</span>
+              <span>连接时长</span>
+              <span class="num">↓ 速率</span>
+              <span class="num">↑ 速率</span>
+              <span style="width: 57px;"></span>
+            </div>
+            <div id="clients" class="client-body">
+              <div class="empty">暂无客户端</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 页面:热点设置 ===== -->
+      <section class="page" id="page-settings">
+        <header class="page-head">
+          <div>
+            <h1>热点设置</h1>
+            <p class="page-sub">配置热点网卡与无线参数</p>
+          </div>
+          <div class="row-actions">
+            <button id="saveBtn" class="primary-btn" type="button" disabled>保存</button>
+          </div>
+        </header>
+
+        <div class="card settings-card">
+          <form id="configForm" class="grid">
+            <label class="field">
+              <span>共享网卡</span>
+              <select name="uplinkIface" id="uplinkSelect"></select>
+            </label>
+            <label class="field">
+              <span>热点网卡</span>
+              <select name="iface" id="ifaceSelect"></select>
+            </label>
+            <label class="field">
+              <span>SSID</span>
+              <input name="ssid" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>密码</span>
+              <span class="pwd-field">
+                <input name="password" id="settingsPwd" type="password" autocomplete="off">
+                <button id="toggleSettingsPwdBtn" class="eye-btn" type="button" title="显示/隐藏密码">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </span>
+              <!-- <span class="field-hint">至少 8 位</span> -->
+            </label>
+            <label class="field">
+              <span>频段</span>
+              <select name="band">
+                <option value="bg">2.4G</option>
+                <option value="a">5G</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>信道</span>
+              <select name="channel" id="channelSelect"></select>
+            </label>
+            <label class="field">
+              <span>信道带宽</span>
+              <select name="channelWidth">
+                <option value="20">20 MHz</option>
+                <option value="40">40 MHz</option>
+                <option value="80">80 MHz</option>
+                <option value="160">160 MHz</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>IP/CIDR</span>
+              <input name="ipCidr" placeholder="192.168.80.1/24" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>本机端口</span>
+              <select name="portPolicy" id="portPolicySelect">
+                <option value="allow">全部放行</option>
+                <option value="deny">全部拦截</option>
+                <option value="custom">部分端口</option>
+              </select>
+              <span class="field-hint">是否开放本机端口给客户端</span>
+            </label>
+            <label class="field" id="allowPortsField">
+              <span>本机白名单端口</span>
+              <input name="allowPorts" placeholder="80,443,5666,5667,67-68/udp" autocomplete="off">
+              <span class="field-hint">格式如 80,443,5666,5667,67-68/udp，逗号分隔</span>
+            </label>
+            <label class="field">
+              <span>网络隔离</span>
+              <select name="isolation">
+                <option value="1">开启</option>
+                <option value="0">关闭</option>
+              </select>
+              <span class="field-hint">开启后热点设备无法访问主网络设备与本机服务（白名单端口除外）</span>
+            </label>
+          </form>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- 确认弹窗 -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+      <div class="modal-actions">
+        <button id="modalCancel" class="ghost-btn" type="button">取消</button>
+        <button id="modalOk" class="primary-btn" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app/fnwifi/app.js"></script>
+</body>
+
+</html>
