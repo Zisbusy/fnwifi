@@ -88,7 +88,7 @@ def main():
     # 停用/卸载模式：只撤销热点，不启动服务器
     if args.cleanup:
         try:
-            net.perform_stop()
+            net.perform_stop(clear_state=False)
             print("cleanup done")
         except Exception as exc:
             print(f"cleanup error: {exc}")
