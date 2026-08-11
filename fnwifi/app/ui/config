@@ -1,0 +1,17 @@
+{
+  ".url": {
+    "fnwifi.Application": {
+      "title": "无线热点",
+      "icon": "images/icon_{0}.png",
+      "type": "iframe",
+      "url": "/app/fnwifi",
+      "gatewaySocket": "fnwifi.sock",
+      "gatewayPrefix": "/app/fnwifi",
+      "allUsers": false,
+      "control": {
+        "accessPerm": "readonly",
+        "fullUrlPerm": "readonly"
+      }
+    }
+  }
+}
