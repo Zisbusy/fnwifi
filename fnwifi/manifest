@@ -1,0 +1,13 @@
+appname               = fnwifi
+version               = 1.1.0
+display_name          = 无线热点
+desc                  = 在飞牛中利用无线网卡开启一个无线热点。
+platform              = all
+source                = thirdparty
+desktop_uidir         = ui
+desktop_applaunchname = fnwifi.Application
+maintainer            = 大哲
+maintainer_url        = https://zhebk.cn/
+distributor           = 大哲
+distributor_url       = https://github.com/Zisbusy/fnwifi
+install_type          = root
