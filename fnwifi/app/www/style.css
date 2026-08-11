@@ -658,9 +658,10 @@ button:disabled {
   }
 
   #app {
-    grid-template-columns: 1fr;
     height: auto;
     min-height: 100vh;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
   }
 
   .sidebar {
