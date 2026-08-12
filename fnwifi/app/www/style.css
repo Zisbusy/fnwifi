@@ -486,7 +486,7 @@ select {
 .primary-btn,
 .ghost-btn,
 .danger-btn {
-  height: 28px;
+  height: 32px;
   border: 0;
   border-radius: 8px;
   cursor: pointer;
@@ -516,6 +516,7 @@ select {
 .danger-btn {
   background: rgba(255, 92, 108, 0.14);
   color: #c0392b;
+  height: 30px;
 }
 
 button:disabled {
