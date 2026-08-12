@@ -12,47 +12,48 @@
 <body>
   <script>
     (function () {
+      // 飞牛主题模式:10=浅色, 20=深色, 30=跟随系统
       var THEME_DARK = 20;
       var THEME_LIGHT = 10;
       var THEME_OS = 30;
-      var mq = window.matchMedia
-        ? window.matchMedia("(prefers-color-scheme: dark)")
-        : null;
-
+    
+      var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    
+      // 读取主题:优先飞牛 app 写入的 localStorage,没有则跟随系统
       function getThemeType() {
-        var stored =
-          window.localStorage.getItem("os-theme-mode") ||
-          window.localStorage.getItem("fnos-theme-mode");
-        return stored ? Number(stored) : THEME_LIGHT;
-      }
-
-      function applyTheme() {
-        var themeType = getThemeType();
-        var isDark =
-          themeType === THEME_DARK ||
-          (themeType === THEME_OS && mq && mq.matches);
-        // 注意:要同时处理“切回亮色”,不能只加不删
-        if (isDark) {
-          document.body.setAttribute("theme-mode", "dark");
-        } else {
-          document.body.removeAttribute("theme-mode");
+        var v = null;
+        try {
+          v = localStorage.getItem("os-theme-mode");
+          if (v === null || v === "") v = localStorage.getItem("fnos-theme-mode");
+        } catch (e) {
+          // localStorage 不可用(隐私模式等),退回跟随系统
         }
+        return v !== null && v !== "" ? Number(v) : THEME_OS;
       }
-
+    
+      function applyTheme() {
+        var t = getThemeType();
+        var isDark = t === THEME_DARK || (t === THEME_OS && mq.matches);
+        document.body.setAttribute("theme-mode", isDark ? "dark" : "light");
+      }
+    
       // 1. 页面加载时应用一次
       applyTheme();
-
-      // 2. 系统设置页切主题 → 同源 localStorage 变化 → storage 事件
-      window.addEventListener("storage", function (e) {
-        if (e.key === "os-theme-mode" || e.key === "fnos-theme-mode") {
+    
+      // 2. 系统主题切换(飞牛"跟随系统"时,系统明暗变化这里触发)
+      if (mq.addEventListener) mq.addEventListener("change", applyTheme);
+      else mq.addListener(applyTheme);
+    
+      // 3. 飞牛设置页切主题 → localStorage 变化
+      //    (同一 WebView 内修改不触发 storage 事件,用轮询兜底)
+      var last = getThemeType();
+      setInterval(function () {
+        var now = getThemeType();
+        if (now !== last) {
+          last = now;
           applyTheme();
         }
-      });
-
-      // 3. “跟随系统”模式下,系统明暗切换
-      if (mq) {
-        mq.addEventListener("change", applyTheme);
-      }
+      }, 500);
     })();
   </script>
   <!-- 主界面分栏 -->
