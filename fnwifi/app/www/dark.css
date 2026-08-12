@@ -6,6 +6,9 @@ body[theme-mode="dark"] .field input,
 body[theme-mode="dark"] .field select {
     background: #0c0c0d;
 }
+body[theme-mode="dark"] .sidebar {
+    border-bottom: 1px solid #ffffff0f;
+}
 body[theme-mode="dark"] .nav button {
     color: #f2f3f4cc;
 }
@@ -31,7 +34,8 @@ body[theme-mode="dark"] .info-item strong,
 body[theme-mode="dark"] .client-row:not(.client-row-head),
 body[theme-mode="dark"] .field input, 
 body[theme-mode="dark"] .field select,
-body[theme-mode="dark"] .modal-content h2 {
+body[theme-mode="dark"] .modal-content h2,
+body[theme-mode="dark"] .toast {
     color: #ffffff;
 }
 body[theme-mode="dark"] .page-sub,
@@ -68,4 +72,21 @@ body[theme-mode="dark"] .ghost-btn {
 }
 body[theme-mode="dark"] .client-body .empty {
     border: 1px dashed #ffffff29;
+}
+@media (max-width: 860px) {
+    body[theme-mode="dark"] .sidebar,
+    body[theme-mode="dark"] .main {
+        background: #1e1e20;
+    }
+    body[theme-mode="dark"] .nav button.active {
+        background-color: #2b2b2d;
+        color: #fff;
+        border: 1px solid #575659;
+    }
+    body[theme-mode="dark"] .info-item,
+    body[theme-mode="dark"] .field input,
+    body[theme-mode="dark"] .field select,
+    body[theme-mode="dark"] .client-row:not(.client-row-head) {
+        background: #2b2b2d;
+    }
 }
