@@ -486,12 +486,12 @@ select {
 .primary-btn,
 .ghost-btn,
 .danger-btn {
-  height: 30px;
+  height: 28px;
   border: 0;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   padding: 0 14px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 }
 
