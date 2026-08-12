@@ -698,11 +698,6 @@ button:disabled {
     padding: 14px;
   }
 
-  .page-head {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
   .row-actions {
     justify-content: flex-start;
   }
