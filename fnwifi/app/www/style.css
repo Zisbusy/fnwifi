@@ -83,6 +83,7 @@ select {
   align-items: center;
   gap: 8px;
   text-align: left;
+  -webkit-tap-highlight-color: #ffffff00;
 }
 
 .nav button:hover {
