@@ -286,6 +286,7 @@ select {
   color: #9a9a9e;
   cursor: pointer;
   padding: 0;
+  -webkit-tap-highlight-color: #ffffff00;
 }
 
 .eye-btn:hover {
@@ -494,6 +495,7 @@ select {
   padding: 0 14px;
   font-size: 12px;
   font-weight: 600;
+  -webkit-tap-highlight-color: #ffffff00;
 }
 
 .primary-btn {
